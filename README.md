@@ -1,4 +1,4 @@
-StackEdit download proxy
+StackEdit Download Proxy
 ========================
 
 Download proxy for StackEdit. Allows StackEdit to open any URL using CORS.
