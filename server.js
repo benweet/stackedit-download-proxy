@@ -1,8 +1,6 @@
-var url   = require('url'),
-    http  = require('http'),
-    https = require('https'),
-    fs    = require('fs'),
+var fs    = require('fs'),
     express = require('express'),
+    request = require('request'),
     qs    = require('querystring');
 
 // Load config defaults from JSON file.
@@ -22,8 +20,8 @@ var app = express();
 
 // Convenience for allowing CORS on routes - GET only
 app.all('*', function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*'); 
-  res.header('Access-Control-Allow-Methods', 'GET, OPTIONS'); 
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
   next();
 });
@@ -32,21 +30,9 @@ app.get('/download', function(req, res) {
 	console.log("/download");
 	var url = req.param('url');
 	if(!url) {
-		res.send("No URL parameter", 500);
+		return res.send("No URL parameter", 500);
 	}
-	else if(url.indexOf("http://") === 0) {
-		http.get(url, function(response) {
-			response.pipe(res);
-		});
-	}
-	else if(url.indexOf("https://") === 0) {
-		https.get(url, function(response) {
-			response.pipe(res);
-		});
-	}
-	else {
-		res.send("Unknown protocol", 500);
-	}
+    request.get(url).pipe(res);
 });
 
 var port = process.env.PORT || config.port || 9999;
