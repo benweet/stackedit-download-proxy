@@ -9,7 +9,7 @@
   "contributors": [],
   "dependencies": [
     "express",
-    "request"
+    "follow-redirects"
   ],
   "engines": {
     "node": "0.10.x"

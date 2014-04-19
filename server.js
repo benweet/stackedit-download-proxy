@@ -1,6 +1,6 @@
-var fs    = require('fs'),
+var followRedirect = require('follow-redirects'),
+    fs    = require('fs'),
     express = require('express'),
-    request = require('request'),
     qs    = require('querystring');
 
 // Load config defaults from JSON file.
@@ -30,9 +30,21 @@ app.get('/download', function(req, res) {
 	console.log("/download");
 	var url = req.param('url');
 	if(!url) {
-		return res.send("No URL parameter", 500);
+		res.send("No URL parameter", 500);
 	}
-    request.get(url).pipe(res);
+	else if(url.indexOf("http://") === 0) {
+		followRedirect.http.get(url, function(response) {
+			response.pipe(res);
+		});
+	}
+	else if(url.indexOf("https://") === 0) {
+		followRedirect.https.get(url, function(response) {
+			response.pipe(res);
+		});
+	}
+	else {
+		res.send("Unknown protocol", 500);
+	}
 });
 
 var port = process.env.PORT || config.port || 9999;
